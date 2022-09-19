@@ -1,0 +1,11 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="classpath:changes/1-createTable.xml"/>
+    <include file="classpath:changes/2-createIndex.xml"/>
+    <include file="classpath:changes/3-addForeignKeyConstraint.xml"/>
+    <include file="classpath:changes/4-populateData.xml"/>
+</databaseChangeLog>

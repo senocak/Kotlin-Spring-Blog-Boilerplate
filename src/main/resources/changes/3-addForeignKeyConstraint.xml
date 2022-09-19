@@ -1,0 +1,54 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="anil" id="1640802957604-3-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK5lidm6cqbc7u4xhqpxm898qme" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="FK5lidm6cqbc7u4xhqpxm898qme" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-3-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKh4c7lvsc298whoyd4w9ta25cr" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="comments" constraintName="FKh4c7lvsc298whoyd4w9ta25cr" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="posts"/>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-3-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKh8ciramu9cc9q3qcqiv4ue8a6" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_roles" constraintName="FKh8ciramu9cc9q3qcqiv4ue8a6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="roles"/>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-3-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKhfh9dx7w3ubf1co1vdev94g3f" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_roles" constraintName="FKhfh9dx7w3ubf1co1vdev94g3f" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-3-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKkifam22p4s1nm3bkmp1igcn5w" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="post_category" constraintName="FKkifam22p4s1nm3bkmp1igcn5w" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="posts"/>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-3-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKm6cfovkyqvu5rlm6ahdx3eavj" />
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="post_category" constraintName="FKm6cfovkyqvu5rlm6ahdx3eavj" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="categories"/>
+    </changeSet>
+</databaseChangeLog>

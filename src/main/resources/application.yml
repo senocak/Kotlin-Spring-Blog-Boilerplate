@@ -1,0 +1,72 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3310}/${MYSQL_DB:springKotlin}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=true&characterEncoding=UTF-8
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:senocak}
+  liquibase:
+    enabled: true
+    change-log: classpath:changelog.xml
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        enable_lazy_load_no_trans: true
+    hibernate:
+      ddl-auto: validate
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      fail-on-unknown-properties: true
+    time-zone: UTC
+    mapper:
+      sort-properties-alphabetically: false
+  graphql:
+    graphiql:
+      enabled: true
+    path: /graphql/v1
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: off
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: '#{60 * 50 * 1000}' # 50 minutes in milliseconds
+  rabbitmq:
+    HOST: ${RABBITMQ_HOST:localhost}
+    PORT: ${RABBITMQ_PORT:5672}
+    USER: ${RABBITMQ_USER:guest}
+    SECRET: ${RABBITMQ_SECRET:guest}
+    EXCHANGE: ${EXCHANGE:spring-jwt-exchange}
+    QUEUE: ${QUEUE:spring-jwt-queue}
+    ROUTING_KEY: ${ROUTING_KEY:spring-jwt-routing-key}
+  redis:
+    HOST: ${REDIS_HOST:localhost}
+    PORT: ${REDIS_PORT:6379}
+    PASSWORD: ${REDIS_PASSWORD:senocak}
+    TIMEOUT: ${REDIS_TIMEOUT:300}
+mail:
+  host: host
+  port: 1
+  protocol: protocol
+  username: username
+  password: password
+  smtp:
+    socketFactory:
+      port: 465
+      fallback: false
+    auth: true
+    starttls:
+      enable: true
+      required: true
+springdoc:
+  api-docs:
+    path: /api/v1/swagger
+  version: @project.version@

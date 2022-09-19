@@ -1,0 +1,56 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="anil" id="1640802957604-2-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="FK5lidm6cqbc7u4xhqpxm898qme" />
+            </not>
+        </preConditions>
+        <createIndex indexName="FK5lidm6cqbc7u4xhqpxm898qme" tableName="posts">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-2-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="FKh4c7lvsc298whoyd4w9ta25cr" />
+            </not>
+        </preConditions>
+        <createIndex indexName="FKh4c7lvsc298whoyd4w9ta25cr" tableName="comments">
+            <column name="post_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-2-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="FKh8ciramu9cc9q3qcqiv4ue8a6" />
+            </not>
+        </preConditions>
+        <createIndex indexName="FKh8ciramu9cc9q3qcqiv4ue8a6" tableName="user_roles">
+            <column name="role_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-2-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="FKkifam22p4s1nm3bkmp1igcn5w" />
+            </not>
+        </preConditions>
+        <createIndex indexName="FKkifam22p4s1nm3bkmp1igcn5w" tableName="post_category">
+            <column name="post_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="anil" id="1640802957604-2-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="FKm6cfovkyqvu5rlm6ahdx3eavj" />
+            </not>
+        </preConditions>
+        <createIndex indexName="FKm6cfovkyqvu5rlm6ahdx3eavj" tableName="post_category">
+            <column name="category_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
