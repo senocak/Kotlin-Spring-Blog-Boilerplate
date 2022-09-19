@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 //@Import(TestConfig::class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @ContextConfiguration(initializers = [
-//    MysqlInitializer::class,
+    MysqlInitializer::class,
     RabbitMqInitializer::class,
     RedisInitializer::class
 ])

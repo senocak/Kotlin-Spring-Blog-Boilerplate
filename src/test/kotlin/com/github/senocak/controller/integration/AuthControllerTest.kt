@@ -52,7 +52,6 @@ class AuthControllerTest {
     @Autowired var userService: UserService? = null
     @Autowired var objectMapper: ObjectMapper? = null
     @Autowired var roleRepository: RoleRepository? = null
-    @Autowired var userRepository: UserRepository? = null
     @MockBean var roleService: RoleService? = null
     private var mockMvc: MockMvc? = null
 
@@ -143,188 +142,178 @@ class AuthControllerTest {
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username",
-                    IsEqual.equalTo(USER_USERNAME)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email",
-                    IsNull.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles",
-                    Matchers.hasSize<Any>(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles[0].name",
-                    IsEqual.equalTo(RoleName.ROLE_USER.toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token",
-                    IsNull.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.refreshToken",
-                    IsNull.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username", IsEqual.equalTo(loginRequest.username)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email", IsNull.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles", Matchers.hasSize<Any>(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles[0].name", IsEqual.equalTo(RoleName.ROLE_USER.role)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token", IsNull.notNullValue()))
         }
     }
 
-//    @Nested
-//    @Order(2)
-//    @DisplayName("Test class for register scenarios")
-//    @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-//    internal inner class RegisterTest {
-//        private var registerRequest: RegisterRequest = RegisterRequest()
-//
-//        @Test
-//        @Order(1)
-//        @DisplayName("ServerException is expected since request body is not valid")
-//        @Throws(Exception::class)
-//        fun givenInvalidSchema_whenRegister_thenThrowServerException() {
-//            // Given
-//            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
-//                .post(AuthController.URL + "/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(writeValueAsString(registerRequest))
-//            // When
-//            val perform = mockMvc!!.perform(requestBuilder)
-//            // Then
-//            perform
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
-//                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
-//                    IsEqual.equalTo(OmaErrorMessageType.DETAILED_INVALID_INPUT.messageId)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
-//                    IsEqual.equalTo(OmaErrorMessageType.DETAILED_INVALID_INPUT.text)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
-//                    Matchers.hasSize<Any>(3)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
-//                    IsEqual.equalTo("attribute")))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[1]",
-//                    IsEqual.equalTo("password")))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[2]",
-//                    IsEqual.equalTo("found datatype null, but required datatype is string")))
-//        }
-//
-//        @Test
-//        @Order(2)
-//        @DisplayName("ServerException is expected since there is already user with username")
-//        @Throws(Exception::class)
-//        fun givenUserNameExist_whenRegister_thenThrowServerException() {
-//            // Given
-//            registerRequest.name = USER_NAME
-//            registerRequest.username = USER_USERNAME
-//            registerRequest.email = USER_EMAIL
-//            registerRequest.password = USER_PASSWORD
-//            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
-//                .post(AuthController.URL + "/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(writeValueAsString(registerRequest))
-//            // When
-//            val perform = mockMvc!!.perform(requestBuilder)
-//            // Then
-//            perform
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
-//                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
-//                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.messageId)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
-//                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
-//                    Matchers.hasSize<Any>(1)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
-//                    IsEqual.equalTo("Username is already taken!")))
-//        }
-//
-//        @Test
-//        @Order(3)
-//        @DisplayName("ServerException is expected since there is already user with email")
-//        @Throws(Exception::class)
-//        fun givenEmailExist_whenRegister_thenThrowServerException() {
-//            // Given
-//            registerRequest.name = USER_NAME
-//            registerRequest.username = "USER_USERNAME"
-//            registerRequest.email = USER_EMAIL
-//            registerRequest.password = USER_PASSWORD
-//            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
-//                .post(AuthController.URL + "/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(writeValueAsString(registerRequest))
-//            // When
-//            val perform = mockMvc!!.perform(requestBuilder)
-//            // Then
-//            perform
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
-//                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
-//                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.messageId)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
-//                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
-//                    Matchers.hasSize<Any>(1)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
-//                        IsEqual.equalTo("Email Address already in use!")))
-//        }
-//
-//        @Test
-//        @Order(4)
-//        @DisplayName("ServerException is expected since invalid role")
-//        @Throws(Exception::class)
-//        fun givenNullRole_whenRegister_thenThrowServerException() {
-//            // Given
-//            Mockito.doReturn(null).`when`(roleService)!!.findByName(RoleName.ROLE_USER)
-//            registerRequest.name = USER_NAME
-//            registerRequest.username = "USER_USERNAME"
-//            registerRequest.email = "userNew@email.com"
-//            registerRequest.password = USER_PASSWORD
-//            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
-//                .post(AuthController.URL + "/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(writeValueAsString(registerRequest))
-//            // When
-//            val perform = mockMvc!!.perform(requestBuilder)
-//            // Then
-//            perform
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
-//                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
-//                    IsEqual.equalTo(OmaErrorMessageType.MANDATORY_INPUT_MISSING.messageId)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
-//                    IsEqual.equalTo(OmaErrorMessageType.MANDATORY_INPUT_MISSING.text)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
-//                    Matchers.hasSize<Any>(1)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
-//                    IsEqual.equalTo("User Role is not found")))
-//        }
-//
-//        @Test
-//        @Order(5)
-//        @DisplayName("Happy path")
-//        @Throws(Exception::class)
-//        fun given_whenRegister_thenReturn201() {
-//            // Given
-//            val role: Role? = roleRepository!!.findByName(RoleName.ROLE_USER).orElse(null)
-//            Mockito.doReturn(role).`when`(roleService)!!.findByName(RoleName.ROLE_USER)
-//            registerRequest.name = USER_NAME
-//            registerRequest.username = "USER_USERNAME"
-//            registerRequest.email = "userNew@email.com"
-//            registerRequest.password = USER_PASSWORD
-//            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
-//                .post(AuthController.URL + "/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(writeValueAsString(registerRequest))
-//            // When
-//            val perform = mockMvc!!.perform(requestBuilder)
-//            // Then
-//            perform
-//                .andExpect(MockMvcResultMatchers.status().isCreated)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username",
-//                    IsNull.notNullValue()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username",
-//                    IsEqual.equalTo("USER_USERNAME")))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email",
-//                       IsNull.notNullValue()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles",
-//                    Matchers.hasSize<Any>(1)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles[0].name",
-//                        IsEqual.equalTo(RoleName.ROLE_USER.toString())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.token",
-//                    IsNull.notNullValue()))
-//        }
-//    }
+    @Nested
+    @Order(2)
+    @DisplayName("Test class for register scenarios")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+    internal inner class RegisterTest {
+        private var registerRequest: RegisterRequest = RegisterRequest()
+
+        @Test
+        @Order(1)
+        @DisplayName("ServerException is expected since request body is not valid")
+        @Throws(Exception::class)
+        fun givenInvalidSchema_whenRegister_thenThrowServerException() {
+            // Given
+            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
+                .post(AuthController.URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValueAsString(registerRequest))
+            // When
+            val perform = mockMvc!!.perform(requestBuilder)
+            // Then
+            perform
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
+                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.messageId)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
+                    Matchers.hasSize<Any>(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
+                    containsInAnyOrder("password: must not be blank","username: must not be blank",
+                        "email: must not be null", "name: must not be blank","email: Invalid email")))
+        }
+
+        @Test
+        @Order(2)
+        @DisplayName("ServerException is expected since there is already user with username")
+        @Throws(Exception::class)
+        fun givenUserNameExist_whenRegister_thenThrowServerException() {
+            // Given
+            registerRequest.name = USER_NAME
+            registerRequest.username = USER_USERNAME
+            registerRequest.email = USER_EMAIL
+            registerRequest.password = USER_PASSWORD
+            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
+                .post(AuthController.URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValueAsString(registerRequest))
+            // When
+            val perform = mockMvc!!.perform(requestBuilder)
+            // Then
+            perform
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
+                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.messageId)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
+                    Matchers.hasSize<Any>(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
+                    IsEqual.equalTo("Username is already taken!")))
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("ServerException is expected since there is already user with email")
+        @Throws(Exception::class)
+        fun givenEmailExist_whenRegister_thenThrowServerException() {
+            // Given
+            registerRequest.name = USER_NAME
+            registerRequest.username = "USER_USERNAME"
+            registerRequest.email = USER_EMAIL
+            registerRequest.password = USER_PASSWORD
+            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
+                .post(AuthController.URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValueAsString(registerRequest))
+            // When
+            val perform = mockMvc!!.perform(requestBuilder)
+            // Then
+            perform
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
+                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.messageId)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
+                    IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
+                    Matchers.hasSize<Any>(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
+                        IsEqual.equalTo("Email Address already in use!")))
+        }
+
+        @Test
+        @Order(4)
+        @DisplayName("ServerException is expected since invalid role")
+        @Throws(Exception::class)
+        fun givenNullRole_whenRegister_thenThrowServerException() {
+            // Given
+            Mockito.doReturn(null).`when`(roleService)!!.findByName(RoleName.ROLE_USER)
+            registerRequest.name = USER_NAME
+            registerRequest.username = "USER_USERNAME"
+            registerRequest.email = "userNew@email.com"
+            registerRequest.password = USER_PASSWORD
+            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
+                .post(AuthController.URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValueAsString(registerRequest))
+            // When
+            val perform = mockMvc!!.perform(requestBuilder)
+            // Then
+            perform
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.statusCode",
+                    IsEqual.equalTo(HttpStatus.BAD_REQUEST.value())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.id",
+                    IsEqual.equalTo(OmaErrorMessageType.MANDATORY_INPUT_MISSING.messageId)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
+                    IsEqual.equalTo(OmaErrorMessageType.MANDATORY_INPUT_MISSING.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
+                    Matchers.hasSize<Any>(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables[0]",
+                    IsEqual.equalTo("User Role is not found")))
+        }
+
+        @Test
+        @Order(5)
+        @DisplayName("Happy path")
+        @Throws(Exception::class)
+        fun given_whenRegister_thenReturn201() {
+            // Given
+            val role: Role? = roleRepository!!.findByName(RoleName.ROLE_USER).orElse(null)
+            Mockito.doReturn(role).`when`(roleService)!!.findByName(RoleName.ROLE_USER)
+            registerRequest.name = USER_NAME
+            registerRequest.username = "USER_USERNAME"
+            registerRequest.email = "userNew@email.com"
+            registerRequest.password = USER_PASSWORD
+            val requestBuilder: RequestBuilder = MockMvcRequestBuilders
+                .post(AuthController.URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValueAsString(registerRequest))
+            // When
+            val perform = mockMvc!!.perform(requestBuilder)
+            // Then
+            perform
+                .andExpect(MockMvcResultMatchers.status().isCreated)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username",
+                    IsNull.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username",
+                    IsEqual.equalTo("USER_USERNAME")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email",
+                       IsNull.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles",
+                    Matchers.hasSize<Any>(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.roles[0].name",
+                        IsEqual.equalTo(RoleName.ROLE_USER.role)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token",
+                    IsNull.notNullValue()))
+        }
+    }
 
     /**
      * @param value -- an object that want to be serialized

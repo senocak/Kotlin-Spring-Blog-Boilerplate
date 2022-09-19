@@ -18,6 +18,7 @@ import java.util.Date
 @Component
 class JwtTokenProvider {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    // TODO: put all tokens in expiring map for refresh token impl.
 
     @Value("\${app.jwtSecret}") private val jwtSecret: String? = null
     @Value("\${app.jwtExpirationInMs}") private val jwtExpirationInMs = 0

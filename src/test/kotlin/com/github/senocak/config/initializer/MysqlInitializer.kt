@@ -13,29 +13,31 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables
 @TestConfiguration
 class MysqlInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
     override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
-        MYSQL_CONTAINER!!.start()
-        env.set("MYSQL_HOST", MYSQL_CONTAINER!!.containerIpAddress)
-        TestPropertyValues.of(
-            "spring.datasource.url=" + MYSQL_CONTAINER!!.jdbcUrl,
-            "spring.datasource.username=" + MYSQL_CONTAINER!!.username,
-            "spring.datasource.password=" + MYSQL_CONTAINER!!.password
-        ).applyTo(configurableApplicationContext.environment)
+//        TestPropertyValues.of(
+//            "spring.datasource.url=" + MYSQL_CONTAINER!!.jdbcUrl,
+//            "spring.datasource.username=" + MYSQL_CONTAINER!!.username,
+//            "spring.datasource.password=" + MYSQL_CONTAINER!!.password
+//        ).applyTo(configurableApplicationContext.environment)
     }
 
     companion object {
-        @Container
-        private var MYSQL_CONTAINER: MySQLContainer<*>? = null
-
-        @Rule
-        val env: EnvironmentVariables = EnvironmentVariables()
+        @Container private var MYSQL_CONTAINER: MySQLContainer<*>? = null
+        @Rule private val env: EnvironmentVariables = EnvironmentVariables()
 
         init {
             MYSQL_CONTAINER = MySQLContainer("mysql:8.0.1")
+                .withExposedPorts(3306)
                 .withDatabaseName("spring")
                 .withUsername("root")
                 .withPassword("root")
                 .withInitScript("db.sql")
                 .withStartupTimeout(TestConstants.CONTAINER_WAIT_TIMEOUT)
+            MYSQL_CONTAINER!!.start()
+            env.set("MYSQL_HOST", MYSQL_CONTAINER!!.containerIpAddress)
+            env.set("MYSQL_PORT", MYSQL_CONTAINER!!.getMappedPort(3306).toString())
+            env.set("MYSQL_DB", MYSQL_CONTAINER!!.databaseName)
+            env.set("MYSQL_USER", MYSQL_CONTAINER!!.username)
+            env.set("MYSQL_PASSWORD", MYSQL_CONTAINER!!.password)
         }
     }
 }

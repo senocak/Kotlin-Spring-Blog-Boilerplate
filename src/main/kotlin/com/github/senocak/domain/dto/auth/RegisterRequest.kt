@@ -4,6 +4,7 @@ import com.github.senocak.domain.dto.BaseDto
 import com.github.senocak.util.validation.ValidEmail
 import io.swagger.v3.oas.annotations.media.Schema
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class RegisterRequest(
@@ -18,7 +19,6 @@ data class RegisterRequest(
     var username: String? = null,
 
     @Schema(example = "lorem@ipsum.com", description = "Email of the user", required = true, name = "email", type = "String")
-//    @field:NotBlank @Size(max = 30)
 //    @field:Pattern(regexp = AppConstants.MAIL_REGEX)
     @field:ValidEmail
     var email: String? = null,

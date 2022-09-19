@@ -18,27 +18,22 @@ class RedisInitializer : ApplicationContextInitializer<ConfigurableApplicationCo
 
     companion object {
         private var jedis: Jedis? = null
-        private const val redisPort = 6379
-        private const val REDIS_LOG_REGEX = ".*Ready to accept connections.*"
 
-        @Container
-        var redisContainer: GenericContainer<*>? = null
-
-        @Rule
-        var env = EnvironmentVariables()
+        @Container private var redisContainer: GenericContainer<*>? = null
+        @Rule private var env = EnvironmentVariables()
 
         init {
             redisContainer = GenericContainer("redis:6.2-alpine")
-                .withExposedPorts(redisPort)
+                .withExposedPorts(6379)
                 .withStartupTimeout(TestConstants.CONTAINER_WAIT_TIMEOUT)
-                .waitingFor(Wait.forLogMessage(REDIS_LOG_REGEX, 1))
+                .waitingFor(Wait.forLogMessage(".*Ready to accept connections.*", 1))
             redisContainer!!.start()
-            val REDIS_HOST = redisContainer!!.containerIpAddress
-            val REDIS_PORT = redisContainer!!.firstMappedPort
-            env["REDIS_HOST"] = REDIS_HOST
-            env["REDIS_PORT"] = REDIS_PORT.toString()
+            val host = redisContainer!!.containerIpAddress
+            val port = redisContainer!!.firstMappedPort
+            env["REDIS_HOST"] = host
+            env["REDIS_PORT"] = port.toString()
             env["REDIS_PASSWORD"] = ""
-            jedis = Jedis(REDIS_HOST, REDIS_PORT)
+            jedis = Jedis(host, port)
             Assert.assertNotNull(jedis)
             setInitialValuesRedis()
         }
