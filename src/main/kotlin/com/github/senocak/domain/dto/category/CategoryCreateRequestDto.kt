@@ -3,11 +3,12 @@ package com.github.senocak.domain.dto.category
 import com.github.senocak.domain.dto.BaseDto
 import io.swagger.v3.oas.annotations.media.Schema
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class CategoryCreateRequestDto(
     @Schema(example = "springboot", description = "Name of the category", required = true, name = "name", type = "String")
-    @field:NotBlank
+    @field:NotNull
     @field:Size(min = 3, max = 30)
     var name: String? = null,
 

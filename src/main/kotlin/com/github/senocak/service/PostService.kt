@@ -61,4 +61,12 @@ class PostService(private val postRepository: PostRepository) {
     fun persist(post: Post): Post {
         return postRepository.save(post)
     }
+
+    /**
+     * @param post -- Post object to delete
+     * @return -- Post object that is persisted to db
+     */
+    fun delete(post: Post): Unit {
+        postRepository.delete(post)
+    }
 }

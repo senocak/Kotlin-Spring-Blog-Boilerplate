@@ -249,7 +249,7 @@ class PostsController(
     ): ResponseEntity<Void> {
         val post: Post? = findPostBySlugOrId(slug)
         checkPostBelongToUser(post!!)
-        postService.persist(post)
+        postService.delete(post)
         log.info("Post: {} is deleted", post.title)
         return ResponseEntity.noContent().build()
     }
@@ -361,12 +361,12 @@ class PostsController(
      */
     @Throws(ServerException::class)
     private fun findComment(id: String): Comment {
-        val comment: Comment = commentService.findById(id)
+        val comment: Comment? = commentService.findById(id)
         if (Objects.isNull(comment)) {
             log.error("Comment is not found.")
             throw ServerException(OmaErrorMessageType.NOT_FOUND, arrayOf("Comment: $id"), HttpStatus.NOT_FOUND)
         }
-        return comment
+        return comment!!
     }
 
     /**

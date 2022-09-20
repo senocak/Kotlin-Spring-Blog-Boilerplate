@@ -24,7 +24,7 @@ class CommentService(private val commentRepository: CommentRepository) {
      * @param id -- identifier of the comment entity
      * @return -- A Comment entity retrieved from db
      */
-    fun findById(id: String): Comment {
+    fun findById(id: String): Comment? {
         return commentRepository.findById(id).orElse(null)
     }
 

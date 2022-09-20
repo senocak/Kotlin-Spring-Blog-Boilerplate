@@ -129,12 +129,12 @@ class CommentController(private val commentService: CommentService): BaseControl
      */
     @Throws(ServerException::class)
     private fun findComment(resourceId: String): Comment {
-        val comment: Comment = commentService.findById(resourceId)
+        val comment: Comment? = commentService.findById(resourceId)
         if (Objects.isNull(comment)) {
             log.error("Comment is not found.")
             throw ServerException(OmaErrorMessageType.NOT_FOUND, arrayOf("Comment: $resourceId"), HttpStatus.NOT_FOUND)
         }
-        return comment
+        return comment!!
     }
 
     companion object {

@@ -13,9 +13,7 @@ import com.github.senocak.domain.dto.auth.LoginRequest
 import com.github.senocak.domain.dto.auth.RegisterRequest
 import com.github.senocak.exception.advice.RestExceptionHandler
 import com.github.senocak.repository.RoleRepository
-import com.github.senocak.repository.UserRepository
 import com.github.senocak.service.RoleService
-import com.github.senocak.service.UserService
 import com.github.senocak.util.OmaErrorMessageType
 import com.github.senocak.util.RoleName
 import org.hamcrest.Matchers
@@ -48,12 +46,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 @SpringBootTestConfig
 @DisplayName("Integration Tests for AuthController")
 class AuthControllerTest {
-    @Autowired var authController: AuthController? = null
-    @Autowired var userService: UserService? = null
-    @Autowired var objectMapper: ObjectMapper? = null
-    @Autowired var roleRepository: RoleRepository? = null
-    @MockBean var roleService: RoleService? = null
-    private var mockMvc: MockMvc? = null
+    @Autowired private lateinit var authController: AuthController
+    @Autowired private lateinit var objectMapper: ObjectMapper
+    @Autowired private lateinit var roleRepository: RoleRepository
+    @MockBean  private lateinit var roleService: RoleService
+
+    private lateinit var mockMvc: MockMvc
 
     @BeforeEach
     fun beforeEach() {
@@ -80,7 +78,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(loginRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -109,7 +107,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(loginRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isNotFound)
@@ -138,7 +136,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(loginRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isOk)
@@ -168,7 +166,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(registerRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -179,10 +177,10 @@ class AuthControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exception.error.text",
                     IsEqual.equalTo(OmaErrorMessageType.JSON_SCHEMA_VALIDATOR.text)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
-                    Matchers.hasSize<Any>(5)))
+                    Matchers.hasSize<Any>(4)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exception.variables",
                     containsInAnyOrder("password: must not be blank","username: must not be blank",
-                        "email: must not be null", "name: must not be blank","email: Invalid email")))
+                        "name: must not be blank","email: Invalid email")))
         }
 
         @Test
@@ -200,7 +198,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(registerRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -231,7 +229,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(registerRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -263,7 +261,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(registerRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -285,7 +283,7 @@ class AuthControllerTest {
         @Throws(Exception::class)
         fun given_whenRegister_thenReturn201() {
             // Given
-            val role: Role? = roleRepository!!.findByName(RoleName.ROLE_USER).orElse(null)
+            val role: Role? = roleRepository.findByName(RoleName.ROLE_USER).orElse(null)
             Mockito.doReturn(role).`when`(roleService)!!.findByName(RoleName.ROLE_USER)
             registerRequest.name = USER_NAME
             registerRequest.username = "USER_USERNAME"
@@ -296,7 +294,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValueAsString(registerRequest))
             // When
-            val perform = mockMvc!!.perform(requestBuilder)
+            val perform = mockMvc.perform(requestBuilder)
             // Then
             perform
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -322,6 +320,6 @@ class AuthControllerTest {
      */
     @Throws(JsonProcessingException::class)
     private fun writeValueAsString(value: Any): String {
-        return objectMapper!!.writeValueAsString(value)
+        return objectMapper.writeValueAsString(value)
     }
 }

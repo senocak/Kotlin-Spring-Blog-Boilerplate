@@ -45,7 +45,7 @@ class CommentServiceTest {
         val comment: Optional<Comment> = Optional.of(createComment())
         Mockito.doReturn(comment).`when`(commentRepository).findById(TestConstants.COMMENT_TITLE)
         // When
-        val findByIdOrNameOrSlug: Comment = commentService.findById(TestConstants.COMMENT_TITLE)
+        val findByIdOrNameOrSlug: Comment? = commentService.findById(TestConstants.COMMENT_TITLE)
         // Then
         Assertions.assertEquals(comment.get(), findByIdOrNameOrSlug)
     }
