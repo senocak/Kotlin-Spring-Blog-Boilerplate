@@ -1,0 +1,108 @@
+services:
+  mysql:
+    image: mysql:8.0.1
+    restart: always
+    container_name: database
+    environment:
+      MYSQL_ROOT_HOST: localhost
+      MYSQL_DATABASE: spring
+      # MYSQL_USER: root (root user is created by default)
+      MYSQL_USER: anil
+      MYSQL_PASSWORD: senocak
+      MYSQL_ROOT_PASSWORD: senocak
+    ports:
+      - 3310:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - backend
+  rabbitmq:
+    image: rabbitmq:3.6-management-alpine
+    container_name: amqp
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+    networks:
+      - backend
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis-cache
+    restart: always
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass senocak
+    volumes:
+      - redis-data:/data
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    links:
+      - redis-commander
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    container_name: redis-commander
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: senocak
+      HTTP_USER: anil
+      HTTP_PASSWORD: senocak
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+  backend:
+    build:
+      context: ./spring-kotlin
+      dockerfile: Dockerfile
+    container_name: spring
+    ports:
+      - 8080:8080
+    restart: always
+    environment:
+      MYSQL_HOST: database # or mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: spring
+      MYSQL_USER: root
+      MYSQL_PASSWORD: senocak
+      RABBITMQ_HOST: amqp # or rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_SECRET: guest
+      EXCHANGE: spring-exchange
+      QUEUE: spring-queue
+      ROUTING_KEY: spring-routing-key
+      REDIS_HOST: redis-cache # or redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: senocak
+      REDIS_TIMEOUT: 300
+    depends_on:
+      - mysql
+      - rabbitmq
+      - redis
+    networks:
+      - backend
+  frontend:
+    build:
+      context: ./angular
+      dockerfile: Dockerfile
+    container_name: angular
+    ports:
+      - 4200:4200
+    depends_on:
+      - backend
+    networks:
+      - backend
+volumes:
+  mysql-data:
+  rabbitmq-data:
+  redis-data:
+networks:
+  backend:
