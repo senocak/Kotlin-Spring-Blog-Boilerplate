@@ -12,5 +12,8 @@ class UserWrapperResponse(
     var userResponse: UserResponse,
 
     @Schema(example = "eyJraWQiOiJ...", description = "Jwt Token", required = true, name = "token", type = "String")
-    var token: String? = null
+    var token: String? = null,
+
+    @Schema(example = "eyJraWQiOiJ...", description = "Refresh Token", required = true, name = "token", type = "String")
+    var refreshToken: String? = null
 ): BaseDto()

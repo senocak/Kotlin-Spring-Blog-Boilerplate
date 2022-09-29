@@ -22,11 +22,11 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@Component
 /**
  * Filter class that aims to guarantee a single execution per request dispatch, on any servlet container.
  * @return -- an JwtAuthenticationFilter instance
  */
+@Component
 class JwtAuthenticationFilter(
     private val tokenProvider: JwtTokenProvider,
     private val userService: UserService,

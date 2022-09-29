@@ -4,14 +4,17 @@ import com.github.senocak.domain.ExceptionDto
 import com.github.senocak.domain.Role
 import com.github.senocak.domain.User
 import com.github.senocak.domain.dto.auth.LoginRequest
+import com.github.senocak.domain.dto.auth.RefreshTokenRequest
 import com.github.senocak.domain.dto.auth.RegisterRequest
 import com.github.senocak.domain.dto.user.UserResponse
 import com.github.senocak.domain.dto.user.UserWrapperResponse
 import com.github.senocak.exception.ServerException
+import com.github.senocak.security.Authorize
 import com.github.senocak.security.JwtTokenProvider
 import com.github.senocak.service.DtoConverter
 import com.github.senocak.service.RoleService
 import com.github.senocak.service.UserService
+import com.github.senocak.util.AppConstants
 import com.github.senocak.util.OmaErrorMessageType
 import com.github.senocak.util.RoleName
 import io.swagger.v3.oas.annotations.Operation
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.Objects
 import java.util.stream.Collectors
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping(AuthController.URL)
@@ -124,6 +128,51 @@ class AuthController(
         return ResponseEntity.status(HttpStatus.CREATED).body(`object`)
     }
 
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh Token Endpoint", tags = ["Authentication"])
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "201", description = "successful operation",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = UserWrapperResponse::class)))),
+            ApiResponse(responseCode = "400", description = "Bad credentials",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = ExceptionDto::class)))),
+            ApiResponse(responseCode = "500", description = "internal server error occurred",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = ExceptionDto::class))))
+        ]
+    )
+    @Throws(ServerException::class)
+    fun refresh(
+        @Parameter(description = "Request body to refreshing token", required = true) @Validated @RequestBody refreshTokenRequest: RefreshTokenRequest,
+        resultOfValidation: BindingResult
+    ): ResponseEntity<UserWrapperResponse> {
+        val userNameFromJWT = tokenProvider.getUserNameFromJWT(refreshTokenRequest.token!!)
+        val user: User? = userService.findByUsername(userNameFromJWT)
+        val login: UserResponse = DtoConverter.convertEntityToDto(user!!)
+        tokenProvider.markLogoutEventForToken(user.username)
+        val generateUserWrapperResponse = generateUserWrapperResponse(login)
+        return ResponseEntity.ok(generateUserWrapperResponse)
+    }
+
+    @PostMapping("/logout")
+    @Authorize(roles = [AppConstants.ADMIN, AppConstants.USER])
+    @Operation(summary = "Logout Endpoint", tags = ["Authentication"])
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "201", description = "successful operation",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = UserWrapperResponse::class)))),
+            ApiResponse(responseCode = "400", description = "Bad credentials",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = ExceptionDto::class)))),
+            ApiResponse(responseCode = "500", description = "internal server error occurred",
+                content = arrayOf(Content(mediaType = "application/json", schema = Schema(implementation = ExceptionDto::class))))
+        ]
+    )
+    @Throws(ServerException::class)
+    fun logout(request: HttpServletRequest): ResponseEntity<Unit> {
+        val user: User? = userService.loggedInUser()
+        tokenProvider.markLogoutEventForToken(user!!.username)
+        return ResponseEntity.noContent().build()
+    }
+
     /**
      * Generate UserWrapperResponse with given UserResponse
      * @param userResponse -- UserResponse that contains user data
@@ -131,8 +180,9 @@ class AuthController(
      */
     private fun generateUserWrapperResponse(userResponse: UserResponse): UserWrapperResponse {
         val roles: List<String> = userResponse.roles.stream().map { r -> RoleName.fromString(r.name!!.name)!!.name }.collect(Collectors.toList())
-        val generatedToken = tokenProvider.generateJwtToken(userResponse.username, roles)
-        val userWrapperResponse = UserWrapperResponse(userResponse, generatedToken)
+        val jwtToken = tokenProvider.generateJwtToken(userResponse.username, roles)
+        val refreshToken = tokenProvider.generateRefreshToken(userResponse.username, roles)
+        val userWrapperResponse = UserWrapperResponse(userResponse, jwtToken, refreshToken)
         log.info("UserWrapperResponse is generated. UserWrapperResponse: {}", userWrapperResponse)
         return userWrapperResponse
     }

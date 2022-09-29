@@ -39,6 +39,7 @@ logging:
 app:
   jwtSecret: JWTSuperSecretKey
   jwtExpirationInMs: '#{60 * 50 * 1000}' # 50 minutes in milliseconds
+  refreshExpirationInMs: '#{24 * 60 * 60 * 1000}' # 24 hours in milliseconds
   rabbitmq:
     HOST: ${RABBITMQ_HOST:localhost}
     PORT: ${RABBITMQ_PORT:5672}

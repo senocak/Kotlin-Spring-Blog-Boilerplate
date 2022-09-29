@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         .bannerMode(Banner.Mode.CONSOLE)
         .logStartupInfo(true)
         .listeners(ApplicationListener {
-                event: ApplicationEvent -> getLogger().debug("#### event> " + event.javaClass.canonicalName)
+            event: ApplicationEvent -> getLogger().debug("#### event> " + event.javaClass.canonicalName)
         })
         .build()
         .run(*args)

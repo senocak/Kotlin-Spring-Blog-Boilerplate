@@ -1,6 +1,6 @@
 package com.github.senocak.config
 
-import com.github.senocak.listener.RabbitMqListener
+import com.github.senocak.event.listener.RabbitMqListener
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue

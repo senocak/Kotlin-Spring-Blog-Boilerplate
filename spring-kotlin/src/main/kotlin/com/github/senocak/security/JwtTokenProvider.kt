@@ -1,5 +1,6 @@
 package com.github.senocak.security
 
+import com.github.senocak.event.OnUserLogoutSuccessEvent
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
@@ -8,49 +9,87 @@ import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.SignatureException
 import io.jsonwebtoken.UnsupportedJwtException
+import net.jodah.expiringmap.ExpiringMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Component
+import java.lang.Exception
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @Component
 class JwtTokenProvider {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-    // TODO: put all tokens in expiring map for refresh token impl.
+    private var jwtSecret: String
+    private var jwtExpirationInMs: String
+    private var refreshExpirationInMs: String
+    private var tokenEventMap: ExpiringMap<String, OnUserLogoutSuccessEvent>
 
-    @Value("\${app.jwtSecret}") private val jwtSecret: String? = null
-    @Value("\${app.jwtExpirationInMs}") private val jwtExpirationInMs = 0
+    constructor(@Value("\${app.jwtSecret}") jSecret: String,
+                @Value("\${app.jwtExpirationInMs}") jExpirationInMs: String,
+                @Value("\${app.refreshExpirationInMs}") rExpirationInMs: String) {
+        jwtSecret = jSecret
+        jwtExpirationInMs = jExpirationInMs
+        refreshExpirationInMs = rExpirationInMs
+        tokenEventMap = ExpiringMap.builder().variableExpiration().build()
+    }
 
     /**
      * Generating the jwt token
      * @param subject -- userName
      */
     fun generateJwtToken(subject: String, roles: List<String?>): String {
+        val token = generateToken(subject, roles, jwtExpirationInMs.toLong())
+        val onUserLogoutSuccessEvent = OnUserLogoutSuccessEvent(subject, token, "jwt", jwtExpirationInMs.toLong())
+        tokenEventMap.put(token, onUserLogoutSuccessEvent, jwtExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+        return token
+    }
+
+    /**
+     * Generating the refresh token
+     * @param subject -- userName
+     */
+    fun generateRefreshToken(subject: String, roles: List<String?>): String {
+        val token = generateToken(subject, roles, refreshExpirationInMs.toLong())
+        val onUserLogoutSuccessEvent = OnUserLogoutSuccessEvent(subject, token, "refresh", refreshExpirationInMs.toLong())
+        tokenEventMap.put(token, onUserLogoutSuccessEvent, refreshExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+        return token
+    }
+
+    /**
+     * Generating the token
+     * @param subject -- userName
+     */
+    private fun generateToken(subject: String, roles: List<String?>, expirationInMs: Long): String {
         val now = Date()
-        val expiryDate = Date(now.time + jwtExpirationInMs)
         val claims: MutableMap<String, Any> = HashMap()
         claims["roles"] = roles
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)
             .setIssuedAt(now)
-            .setExpiration(expiryDate)
+            .setExpiration(Date(now.time + expirationInMs))
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact()
+    }
+
+    /**
+     * Get the jws claims
+     * @param token -- jwt token
+     * @return -- expiration date
+     */
+    private fun getJwsClaims(token: String): Jws<Claims?> {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token)
     }
 
     /**
      * @param token -- jwt token
      * @return -- userName from jwt
      */
-    fun getUserNameFromJWT(token: String?): String {
-        val claims: Claims = Jwts.parser()
-            .setSigningKey(jwtSecret)
-            .parseClaimsJws(token)
-            .body
-        return claims.subject
+    fun getUserNameFromJWT(token: String): String {
+        return getJwsClaims(token).body!!.subject
     }
 
     /**
@@ -59,6 +98,7 @@ class JwtTokenProvider {
     fun validateToken(token: String) {
         try {
             getJwsClaims(token)
+            tokenEventMap[token] ?: throw Exception("Token could not found in local cache")
         } catch (ex: SignatureException) {
             log.error("Invalid JWT signature")
             throw AccessDeniedException("Invalid JWT signature")
@@ -77,14 +117,15 @@ class JwtTokenProvider {
         }
     }
 
-    /**
-     * Get the jws claims
-     * @param token -- jwt token
-     * @return -- expiration date
-     */
-    private fun getJwsClaims(token: String): Jws<Claims?> {
-        return Jwts.parser()
-            .setSigningKey(jwtSecret)
-            .parseClaimsJws(token)
+    fun markLogoutEventForToken(username: String) {
+        tokenEventMap.filter { m -> m.value.username == username }
+            .forEach { m ->
+                run {
+                    if (tokenEventMap.containsKey(m.key)) {
+                        tokenEventMap.remove(m.key)
+                    }
+                }
+            }
+        log.debug("Logged out. Tokens for user ${username} removed in the cache")
     }
 }

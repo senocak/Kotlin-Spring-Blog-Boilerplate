@@ -21,7 +21,7 @@
         <swagger.version>1.6.9</swagger.version>
         <jedis.version>3.3.0</jedis.version>
         <liquibase.maven.plugin.version>3.6.3</liquibase.maven.plugin.version>
-        <guava.version>25.0-jre</guava.version>
+        <guava.version>30.0-android</guava.version>
 
         <system.rules.version>1.17.2</system.rules.version>
         <testcontainers.version>1.16.2</testcontainers.version>
@@ -91,7 +91,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
@@ -110,6 +109,11 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>0.5.9</version>
         </dependency>
 
         <dependency>

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class AuthorizationInterceptor(private val authenticationServiceImpl: AuthenticationService): AsyncHandlerInterceptor {
+class AuthorizationInterceptor(private val authenticationService: AuthenticationService): AsyncHandlerInterceptor {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
@@ -97,7 +97,7 @@ class AuthorizationInterceptor(private val authenticationServiceImpl: Authentica
     @Throws(BadCredentialsException::class, AccessDeniedException::class)
     private fun hasAnnotationRole(authorize: Authorize): Boolean {
         return try {
-            authenticationServiceImpl.isAuthorized(authorize.roles)
+            authenticationService.isAuthorized(authorize.roles)
         } catch (ex: Exception) {
             log.trace("Exception occurred while authorizing. Ex: {}", ExceptionUtils.getStackTrace(ex))
             false
