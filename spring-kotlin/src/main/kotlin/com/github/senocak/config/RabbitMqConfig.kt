@@ -15,20 +15,20 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class RabbitMqConfig {
-    @Value("\${app.rabbitmq.HOST}") private val RABBITMQ_HOST: String? = null
-    @Value("\${app.rabbitmq.PORT}") private val RABBITMQ_PORT: Int = 0
-    @Value("\${app.rabbitmq.USER}") private val RABBITMQ_USER: String? = null
-    @Value("\${app.rabbitmq.SECRET}") private val RABBITMQ_SECRET: String? = null
-    @Value("\${app.rabbitmq.EXCHANGE}") private val EXCHANGE: String? = null
-    @Value("\${app.rabbitmq.QUEUE}") private val QUEUE: String? = null
-    @Value("\${app.rabbitmq.ROUTING_KEY}") private val ROUTING_KEY: String? = null
+    @Value("\${app.rabbitmq.HOST}") private val rabbitmqHost: String? = null
+    @Value("\${app.rabbitmq.PORT}") private val rabbitmqPort: Int = 0
+    @Value("\${app.rabbitmq.USER}") private val rabbitmqUser: String? = null
+    @Value("\${app.rabbitmq.SECRET}") private val rabbitmqSecret: String? = null
+    @Value("\${app.rabbitmq.EXCHANGE}") private val exchange: String? = null
+    @Value("\${app.rabbitmq.QUEUE}") private val queue: String? = null
+    @Value("\${app.rabbitmq.ROUTING_KEY}") private val routingKey: String? = null
 
     /**
      * @return the queue
      */
     @Bean
     fun queue(): Queue {
-        return Queue(QUEUE, false)
+        return Queue(queue, false)
     }
 
     /**
@@ -36,7 +36,7 @@ class RabbitMqConfig {
      */
     @Bean
     fun exchange(): TopicExchange {
-        return TopicExchange(EXCHANGE)
+        return TopicExchange(exchange)
     }
 
     /**
@@ -46,7 +46,7 @@ class RabbitMqConfig {
      */
     @Bean
     fun binding(queue: Queue?, exchange: TopicExchange?): Binding {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY)
+        return BindingBuilder.bind(queue).to(exchange).with(routingKey)
     }
 
     /**
@@ -59,7 +59,7 @@ class RabbitMqConfig {
             SimpleMessageListenerContainer {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory!!
-        container.setQueueNames(QUEUE)
+        container.setQueueNames(queue)
         container.setMessageListener(listenerAdapter!!)
         return container
     }
@@ -79,10 +79,10 @@ class RabbitMqConfig {
     @Bean
     fun connectionFactory(): ConnectionFactory {
         val connectionFactory = CachingConnectionFactory()
-        connectionFactory.host = RABBITMQ_HOST!!
-        connectionFactory.port = RABBITMQ_PORT
-        connectionFactory.username = RABBITMQ_USER!!
-        connectionFactory.setPassword(RABBITMQ_SECRET!!)
+        connectionFactory.host = rabbitmqHost!!
+        connectionFactory.port = rabbitmqPort
+        connectionFactory.username = rabbitmqUser!!
+        connectionFactory.setPassword(rabbitmqSecret!!)
         return connectionFactory
     }
 }

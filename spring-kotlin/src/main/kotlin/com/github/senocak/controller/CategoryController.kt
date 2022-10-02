@@ -51,7 +51,7 @@ import kotlin.arrayOf
 @RestController
 @RequestMapping(CategoryController.URL)
 @Tag(name = "Category", description = "Category API")
-class CategoryController(private val categoryService: CategoryService) {
+class CategoryController(private val categoryService: CategoryService): BaseController() {
 
     @Authorize(roles = [ADMIN])
     @PostMapping

@@ -18,7 +18,7 @@ class MailConfig {
     @Value("\${mail.smtp.socketFactory.port}") private val socketPort = 0
     @Value("\${mail.smtp.auth}") private val auth = false
     @Value("\${mail.smtp.starttls.enable}") private val starttls = false
-    @Value("\${mail.smtp.starttls.required}") private val startlls_required = false
+    @Value("\${mail.smtp.starttls.required}") private val startllsRequired = false
     @Value("\${mail.smtp.socketFactory.fallback}") private val fallback = false
 
     @Value("\${mail.host}") private val host: String? = null
@@ -38,7 +38,7 @@ class MailConfig {
         val mailProperties = Properties()
         mailProperties["mail.smtp.auth"] = auth
         mailProperties["mail.smtp.starttls.enable"] = starttls
-        mailProperties["mail.smtp.starttls.required"] = startlls_required
+        mailProperties["mail.smtp.starttls.required"] = startllsRequired
         mailProperties["mail.smtp.socketFactory.port"] = socketPort
         mailProperties["mail.smtp.debug"] = "true"
         mailProperties["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"

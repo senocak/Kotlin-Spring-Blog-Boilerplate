@@ -31,7 +31,7 @@ class RedisConfig {
     @Bean
     fun jedisPool(): JedisPool {
         log.debug("RedisConfig: host=$host, port=$port, password=$password, timeout=$timeout")
-        return JedisPool(JedisPoolConfig(), host, port, timeout, password);
+        return JedisPool(JedisPoolConfig(), host, port, timeout, password)
     }
 
     /**
