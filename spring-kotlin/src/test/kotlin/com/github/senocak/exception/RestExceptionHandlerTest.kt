@@ -1,15 +1,12 @@
 package com.github.senocak.exception
 
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import com.github.senocak.domain.ExceptionDto
-import com.github.senocak.exception.advice.RestExceptionHandler
 import com.github.senocak.util.OmaErrorMessageType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -48,31 +45,11 @@ class RestExceptionHandlerTest {
     }
 
     @Test
-    fun givenExceptionWhenHandleAccessDeniedExceptionThenAssertResult() {
+    fun givenExceptionWhenHandleUnAuthorizedThenAssertResult() {
         // Given
         val ex: RuntimeException = AccessDeniedException("lorem")
         // When
-        val handleBadRequestException: ResponseEntity<Any> = restExceptionHandler.handleAccessDeniedException(ex)
-        val exceptionDto: ExceptionDto? = handleBadRequestException.body as ExceptionDto?
-        // Then
-        Assertions.assertNotNull(exceptionDto)
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, handleBadRequestException.statusCode)
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionDto!!.statusCode)
-        Assertions.assertEquals(OmaErrorMessageType.UNAUTHORIZED.messageId, exceptionDto.error!!.id)
-        Assertions.assertEquals(OmaErrorMessageType.UNAUTHORIZED.text, exceptionDto.error!!.text)
-        Assertions.assertEquals(1, exceptionDto.variables.size)
-        val message: Optional<String?> = Arrays.stream(exceptionDto.variables).findFirst()
-        Assertions.assertTrue(message.isPresent)
-        Assertions.assertEquals(ex.message, message.get())
-    }
-
-    @Test
-    fun givenExceptionWhenHandleUnrecognizedPropertyExceptionThenAssertResult() {
-        // Given
-        val ex: UnrecognizedPropertyException = Mockito.mock(UnrecognizedPropertyException::class.java)
-        Mockito.`when`(ex.message).thenReturn("a")
-        // When
-        val handleBadRequestException: ResponseEntity<Any> = restExceptionHandler.handleUnrecognizedPropertyException(ex)
+        val handleBadRequestException: ResponseEntity<Any> = restExceptionHandler.handleUnAuthorized(ex)
         val exceptionDto: ExceptionDto? = handleBadRequestException.body as ExceptionDto?
         // Then
         Assertions.assertNotNull(exceptionDto)

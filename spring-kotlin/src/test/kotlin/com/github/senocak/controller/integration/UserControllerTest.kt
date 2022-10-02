@@ -8,7 +8,7 @@ import com.github.senocak.controller.UserController
 import com.github.senocak.domain.User
 import com.github.senocak.domain.dto.user.UpdateUserDto
 import com.github.senocak.exception.ServerException
-import com.github.senocak.exception.advice.RestExceptionHandler
+import com.github.senocak.exception.RestExceptionHandler
 import com.github.senocak.repository.UserRepository
 import com.github.senocak.service.UserService
 import com.github.senocak.util.OmaErrorMessageType

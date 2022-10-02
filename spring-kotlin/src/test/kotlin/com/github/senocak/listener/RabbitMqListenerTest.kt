@@ -1,4 +1,4 @@
-package com.github.senocak.event.listener
+package com.github.senocak.listener
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper

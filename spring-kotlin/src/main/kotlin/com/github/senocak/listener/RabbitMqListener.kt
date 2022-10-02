@@ -1,4 +1,4 @@
-package com.github.senocak.event.listener
+package com.github.senocak.listener
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -19,7 +19,8 @@ import java.util.Locale
 class RabbitMqListener(
     private val objectMapper: ObjectMapper,
     private val emailService: EmailService,
-    private val htmlTemplateEngine: ITemplateEngine){
+    private val htmlTemplateEngine: ITemplateEngine
+){
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @RabbitListener(queues = ["\${app.rabbitmq.QUEUE}"])

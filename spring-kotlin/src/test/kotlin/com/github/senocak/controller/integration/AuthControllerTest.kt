@@ -11,7 +11,7 @@ import com.github.senocak.controller.AuthController
 import com.github.senocak.domain.Role
 import com.github.senocak.domain.dto.auth.LoginRequest
 import com.github.senocak.domain.dto.auth.RegisterRequest
-import com.github.senocak.exception.advice.RestExceptionHandler
+import com.github.senocak.exception.RestExceptionHandler
 import com.github.senocak.repository.RoleRepository
 import com.github.senocak.service.RoleService
 import com.github.senocak.util.OmaErrorMessageType

@@ -11,7 +11,7 @@ import com.github.senocak.domain.dto.comment.CommentRequestDto
 import com.github.senocak.domain.dto.comment.CommentWrapperDto
 import com.github.senocak.domain.dto.post.CreatePostDto
 import com.github.senocak.domain.dto.post.PostUpdateDto
-import com.github.senocak.exception.advice.RestExceptionHandler
+import com.github.senocak.exception.RestExceptionHandler
 import com.github.senocak.factory.UserFactory.createRole
 import com.github.senocak.factory.UserFactory.createUser
 import com.github.senocak.repository.UserRepository

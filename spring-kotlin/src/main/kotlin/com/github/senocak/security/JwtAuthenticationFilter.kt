@@ -1,6 +1,6 @@
 package com.github.senocak.security
 
-import com.github.senocak.exception.advice.RestExceptionHandler
+import com.github.senocak.exception.RestExceptionHandler
 import com.github.senocak.service.UserService
 import com.github.senocak.util.AppConstants.TOKEN_HEADER_NAME
 import com.github.senocak.util.AppConstants.TOKEN_PREFIX
@@ -62,7 +62,7 @@ class JwtAuthenticationFilter(
                     logger.trace("SecurityContext created")
                 } catch (exception: Exception) {
                     val responseEntity: ResponseEntity<Any> = RestExceptionHandler()
-                        .handleAccessDeniedException(RuntimeException(exception.message))
+                        .handleUnAuthorized(RuntimeException(exception.message))
                     response.writer.write(objectMapper.writeValueAsString(responseEntity.body))
                     response.status = HttpServletResponse.SC_UNAUTHORIZED
                     response.contentType = "application/json"

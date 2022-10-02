@@ -1,7 +1,6 @@
-package com.github.senocak.exception.advice
+package com.github.senocak.exception
 
 import com.github.senocak.domain.ExceptionDto
-import com.github.senocak.exception.ServerException
 import com.github.senocak.util.OmaErrorMessageType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.HttpMediaTypeNotSupportedException
@@ -45,16 +45,12 @@ class RestExceptionHandler {
         )
     }
 
-    @ExceptionHandler(AccessDeniedException::class)
-    fun handleAccessDeniedException(ex: RuntimeException): ResponseEntity<Any> {
-        return generateResponseEntity(
-            HttpStatus.UNAUTHORIZED,
-            OmaErrorMessageType.UNAUTHORIZED, arrayOf(ex.message)
-        )
-    }
-
-    @ExceptionHandler(com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException::class)
-    fun handleUnrecognizedPropertyException(ex: com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException): ResponseEntity<Any> {
+    @ExceptionHandler(
+        AccessDeniedException::class,
+        AuthenticationCredentialsNotFoundException::class,
+        com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException::class
+    )
+    fun handleUnAuthorized(ex: Exception): ResponseEntity<Any> {
         return generateResponseEntity(
             HttpStatus.UNAUTHORIZED,
             OmaErrorMessageType.UNAUTHORIZED, arrayOf(ex.message)

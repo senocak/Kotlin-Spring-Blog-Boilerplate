@@ -27,7 +27,7 @@ class CustomAuthenticationManager(
             val matches = passwordEncoder.matches(authentication.credentials.toString(), user!!.password)
             if (!matches) {
                 log.error("AuthenticationCredentialsNotFoundException occurred for ${user.name}")
-                throw AuthenticationCredentialsNotFoundException("not matched")
+                throw AuthenticationCredentialsNotFoundException("Username or password invalid")
             }
         }
         val authorities: MutableCollection<SimpleGrantedAuthority> = ArrayList()

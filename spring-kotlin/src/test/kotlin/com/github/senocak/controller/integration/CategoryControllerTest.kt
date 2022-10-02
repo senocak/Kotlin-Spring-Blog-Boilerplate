@@ -6,7 +6,7 @@ import com.github.senocak.config.SpringBootTestConfig
 import com.github.senocak.controller.CategoryController
 import com.github.senocak.domain.dto.category.CategoryCreateRequestDto
 import com.github.senocak.domain.dto.category.CategoryUpdateRequestDto
-import com.github.senocak.exception.advice.RestExceptionHandler
+import com.github.senocak.exception.RestExceptionHandler
 import com.github.senocak.util.AppConstants.toSlug
 import com.github.senocak.util.OmaErrorMessageType
 import org.hamcrest.Matchers

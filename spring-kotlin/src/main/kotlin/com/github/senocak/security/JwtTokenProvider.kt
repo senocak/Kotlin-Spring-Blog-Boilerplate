@@ -1,6 +1,6 @@
 package com.github.senocak.security
 
-import com.github.senocak.event.OnUserLogoutSuccessEvent
+import com.github.senocak.domain.dto.auth.OnUserLogout
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
@@ -25,7 +25,7 @@ class JwtTokenProvider {
     private var jwtSecret: String
     private var jwtExpirationInMs: String
     private var refreshExpirationInMs: String
-    private var tokenEventMap: ExpiringMap<String, OnUserLogoutSuccessEvent>
+    private var tokenEventMap: ExpiringMap<String, OnUserLogout>
 
     constructor(@Value("\${app.jwtSecret}") jSecret: String,
                 @Value("\${app.jwtExpirationInMs}") jExpirationInMs: String,
@@ -42,8 +42,8 @@ class JwtTokenProvider {
      */
     fun generateJwtToken(subject: String, roles: List<String?>): String {
         val token = generateToken(subject, roles, jwtExpirationInMs.toLong())
-        val onUserLogoutSuccessEvent = OnUserLogoutSuccessEvent(subject, token, "jwt", jwtExpirationInMs.toLong())
-        tokenEventMap.put(token, onUserLogoutSuccessEvent, jwtExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+        val onUserLogout = OnUserLogout(subject, token, "jwt", jwtExpirationInMs.toLong())
+        tokenEventMap.put(token, onUserLogout, jwtExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
         return token
     }
 
@@ -53,8 +53,8 @@ class JwtTokenProvider {
      */
     fun generateRefreshToken(subject: String, roles: List<String?>): String {
         val token = generateToken(subject, roles, refreshExpirationInMs.toLong())
-        val onUserLogoutSuccessEvent = OnUserLogoutSuccessEvent(subject, token, "refresh", refreshExpirationInMs.toLong())
-        tokenEventMap.put(token, onUserLogoutSuccessEvent, refreshExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+        val onUserLogout = OnUserLogout(subject, token, "refresh", refreshExpirationInMs.toLong())
+        tokenEventMap.put(token, onUserLogout, refreshExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
         return token
     }
 

@@ -1,10 +1,10 @@
-package com.github.senocak.event
+package com.github.senocak.domain.dto.auth
 
 import org.springframework.context.ApplicationEvent
 import java.time.Instant
 import java.util.Date
 
-class OnUserLogoutSuccessEvent(
+class OnUserLogout(
     val username: String,
     val token: String,
     val type: String,

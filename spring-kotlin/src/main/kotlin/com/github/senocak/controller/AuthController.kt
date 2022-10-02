@@ -145,6 +145,7 @@ class AuthController(
         @Parameter(description = "Request body to refreshing token", required = true) @Validated @RequestBody refreshTokenRequest: RefreshTokenRequest,
         resultOfValidation: BindingResult
     ): ResponseEntity<UserWrapperResponse> {
+        validate(resultOfValidation)
         val userNameFromJWT = tokenProvider.getUserNameFromJWT(refreshTokenRequest.token!!)
         val user: User? = userService.findByUsername(userNameFromJWT)
         val login: UserResponse = DtoConverter.convertEntityToDto(user!!)
