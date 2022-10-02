@@ -42,7 +42,7 @@ class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor):
         configurer
             .setDefaultTimeout(120_000)
             .setTaskExecutor(executor)
-        log.debug("Core pool size: ${executor.corePoolSize}, max pool size: ${executor.maxPoolSize}," +
+        log.info("Core pool size: ${executor.corePoolSize}, max pool size: ${executor.maxPoolSize}," +
                 "keepAliveSeconds: ${executor.keepAliveSeconds}, queueCapacity: ${executor.queueCapacity}," +
                 "queueSize: ${executor.queueSize}")
     }
