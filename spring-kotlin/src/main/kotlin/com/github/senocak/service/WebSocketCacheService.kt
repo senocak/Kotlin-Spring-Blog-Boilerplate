@@ -49,7 +49,7 @@ class WebSocketCacheService(private val objectMapper: ObjectMapper) {
      */
     fun deleteSession(key: String?) {
         val websocketIdentifier: WebsocketIdentifier? = getOrDefault(key)
-        if (websocketIdentifier == null || websocketIdentifier.session == null) {
+        if (websocketIdentifier?.session == null) {
             log.error("Unable to remove the websocket session; serious error!")
             return
         }
