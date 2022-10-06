@@ -16,13 +16,13 @@ import java.util.concurrent.ConcurrentHashMap
 @Service
 class WebSocketCacheService(private val objectMapper: ObjectMapper) {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val userSessionCache: MutableMap<String, WebsocketIdentifier> = ConcurrentHashMap<String, WebsocketIdentifier>()
 
     /**
      * Get all websocket session cache.
      * @return map of websocket session cache.
      */
-    val allWebSocketSession: Map<String, WebsocketIdentifier>
-        get() = userSessionCache
+    val allWebSocketSession: Map<String, WebsocketIdentifier> get() = userSessionCache
 
     /**
      * Add websocket session cache.
@@ -125,10 +125,5 @@ class WebSocketCacheService(private val objectMapper: ObjectMapper) {
      */
     private fun broadCastAllUserList(user: String) {
         sendMessage("server", user, "online", StringUtils.join(userSessionCache.keys, ','))
-    }
-
-    companion object {
-        private val userSessionCache: MutableMap<String, WebsocketIdentifier> =
-            ConcurrentHashMap<String, WebsocketIdentifier>()
     }
 }

@@ -37,19 +37,17 @@ object AppConstants {
     fun getWebsocketIdentifier(path: String): WebsocketIdentifier? {
         if (path.isEmpty()) return null
         val fields = path.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        return if (fields.isEmpty())
-            null
-        else{
-            val websocketIdentifier = WebsocketIdentifier()
-            try {
-                val user = fields[2]
-                websocketIdentifier.user = user
-                websocketIdentifier.channelId = fields[3]
-            } catch (e: IndexOutOfBoundsException) {
-                log.error("Cannot find user or channel id from the path!", e)
-            }
-            websocketIdentifier
+        if (fields.isEmpty())
+            return null
+        val websocketIdentifier = WebsocketIdentifier()
+        try {
+            val user = fields[2]
+            websocketIdentifier.user = user
+            websocketIdentifier.channelId = fields[3]
+        } catch (e: IndexOutOfBoundsException) {
+            log.error("Cannot find user or channel id from the path!", e)
         }
+        return websocketIdentifier
     }
 
     /**

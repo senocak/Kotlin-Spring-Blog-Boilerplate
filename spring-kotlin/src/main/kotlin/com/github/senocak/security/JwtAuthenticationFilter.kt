@@ -50,28 +50,24 @@ class JwtAuthenticationFilter(
             val bearerToken = request.getHeader(TOKEN_HEADER_NAME)
             if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
                 val jwt = bearerToken.substring(7)
-                try {
-                    tokenProvider.validateToken(jwt)
-                    val userName: String = tokenProvider.getUserNameFromJWT(jwt)
-                    val userDetails: UserDetails = userService.loadUserByUsername(userName)
-                    val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.authorities
-                    )
-                    usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                    authenticationManager.authenticate(usernamePasswordAuthenticationToken)
-                    logger.trace("SecurityContext created")
-                } catch (exception: Exception) {
-                    val responseEntity: ResponseEntity<Any> = RestExceptionHandler()
-                        .handleUnAuthorized(RuntimeException(exception.message))
-                    response.writer.write(objectMapper.writeValueAsString(responseEntity.body))
-                    response.status = HttpServletResponse.SC_UNAUTHORIZED
-                    response.contentType = "application/json"
-                    return
-                }
+                tokenProvider.validateToken(jwt)
+                val userName: String = tokenProvider.getUserNameFromJWT(jwt)
+                val userDetails: UserDetails = userService.loadUserByUsername(userName)
+                val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.authorities
+                )
+                usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                authenticationManager.authenticate(usernamePasswordAuthenticationToken)
+                logger.trace("SecurityContext created")
             }
         } catch (ex: Exception) {
-            log.error("Could not set user authentication in security context. Error: {}",
-                ExceptionUtils.getMessage(ex))
+            val responseEntity: ResponseEntity<Any> = RestExceptionHandler()
+                .handleUnAuthorized(RuntimeException(ex.message))
+            response.writer.write(objectMapper.writeValueAsString(responseEntity.body))
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.contentType = "application/json"
+            log.error("Could not set user authentication in security context. Error: {}", ExceptionUtils.getMessage(ex))
+            return
         }
         response.setHeader("Access-Control-Allow-Origin", "*")
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")

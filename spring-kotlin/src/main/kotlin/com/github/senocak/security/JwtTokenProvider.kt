@@ -1,6 +1,6 @@
 package com.github.senocak.security
 
-import com.github.senocak.domain.dto.auth.OnUserLogout
+import com.github.senocak.domain.dto.auth.UserInfoCache
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
@@ -25,7 +25,7 @@ class JwtTokenProvider {
     private var jwtSecret: String
     private var jwtExpirationInMs: String
     private var refreshExpirationInMs: String
-    private var tokenEventMap: ExpiringMap<String, OnUserLogout>
+    private var tokenEventMap: ExpiringMap<String, UserInfoCache>
 
     constructor(@Value("\${app.jwtSecret}") jSecret: String,
                 @Value("\${app.jwtExpirationInMs}") jExpirationInMs: String,
@@ -38,23 +38,23 @@ class JwtTokenProvider {
 
     /**
      * Generating the jwt token
-     * @param subject -- userName
+     * @param username -- userName
      */
-    fun generateJwtToken(subject: String, roles: List<String?>): String {
-        val token = generateToken(subject, roles, jwtExpirationInMs.toLong())
-        val onUserLogout = OnUserLogout(subject, token, "jwt", jwtExpirationInMs.toLong())
-        tokenEventMap.put(token, onUserLogout, jwtExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+    fun generateJwtToken(username: String, roles: List<String?>): String {
+        val token = generateToken(username, roles, jwtExpirationInMs.toLong())
+        val userInfoCache = UserInfoCache(username, token, "jwt", jwtExpirationInMs.toLong())
+        tokenEventMap.put(token, userInfoCache, jwtExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
         return token
     }
 
     /**
      * Generating the refresh token
-     * @param subject -- userName
+     * @param username -- userName
      */
-    fun generateRefreshToken(subject: String, roles: List<String?>): String {
-        val token = generateToken(subject, roles, refreshExpirationInMs.toLong())
-        val onUserLogout = OnUserLogout(subject, token, "refresh", refreshExpirationInMs.toLong())
-        tokenEventMap.put(token, onUserLogout, refreshExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
+    fun generateRefreshToken(username: String, roles: List<String?>): String {
+        val token = generateToken(username, roles, refreshExpirationInMs.toLong())
+        val userInfoCache = UserInfoCache(username, token, "refresh", refreshExpirationInMs.toLong())
+        tokenEventMap.put(token, userInfoCache, refreshExpirationInMs.toLong(), TimeUnit.MILLISECONDS)
         return token
     }
 

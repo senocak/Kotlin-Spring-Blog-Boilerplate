@@ -12,18 +12,18 @@ object DateUtil {
     private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
 
     fun diffForHumans(time: Long): String? {
-        var time = time
+        var _time = time
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = time
+        calendar.timeInMillis = _time
         val year = calendar[Calendar.YEAR]
         val currentYear = Calendar.getInstance()[Calendar.YEAR]
-        if (time < 1000000000000L)
-            time *= 1000
+        if (_time < 1000000000000L)
+            _time *= 1000
         val now = System.currentTimeMillis()
-        if (time > now || time <= 0)
+        if (_time > now || _time <= 0)
             return null
 
-        val diff = now - time
+        val diff = now - _time
         return  if (diff < MINUTE_MILLIS) "just now"
                 else if (diff < 2 * MINUTE_MILLIS) "a minute ago"
                 else if (diff < 50 * MINUTE_MILLIS) (diff / MINUTE_MILLIS).toString() + " minutes ago"
