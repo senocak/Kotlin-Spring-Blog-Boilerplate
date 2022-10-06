@@ -58,7 +58,7 @@ class JwtAuthenticationFilter(
                 )
                 usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                 authenticationManager.authenticate(usernamePasswordAuthenticationToken)
-                logger.trace("SecurityContext created")
+                log.trace("SecurityContext created")
             }
         } catch (ex: Exception) {
             val responseEntity: ResponseEntity<Any> = RestExceptionHandler()
@@ -76,6 +76,6 @@ class JwtAuthenticationFilter(
         response.setHeader("Access-Control-Expose-Headers",
             "Content-Type, Access-Control-Expose-Headers, Authorization, X-Requested-With")
         filterChain.doFilter(request, response)
-        logger.info(request.remoteAddr)
+        log.info("Filtering accessed for remote address: {}", request.remoteAddr)
     }
 }

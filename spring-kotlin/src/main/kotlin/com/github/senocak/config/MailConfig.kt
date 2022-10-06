@@ -71,10 +71,10 @@ class MailConfig {
     private fun htmlTemplateResolver(): ITemplateResolver {
         val templateResolver = ClassLoaderTemplateResolver()
         templateResolver.order = 2
-        templateResolver.prefix = URL_TEMPLATES
-        templateResolver.suffix = HTML_EXTENSION
+        templateResolver.prefix = "/templates/"
+        templateResolver.suffix = ".html"
         templateResolver.templateMode = TemplateMode.HTML
-        templateResolver.characterEncoding = EMAIL_TEMPLATE_ENCODING
+        templateResolver.characterEncoding = "UTF-8"
         templateResolver.isCacheable = false
         return templateResolver
     }
@@ -87,11 +87,5 @@ class MailConfig {
         val messageSource = ResourceBundleMessageSource()
         messageSource.setBasename("templates/i18n/Template")
         return messageSource
-    }
-
-    companion object {
-        const val EMAIL_TEMPLATE_ENCODING = "UTF-8"
-        const val URL_TEMPLATES = "/templates/"
-        const val HTML_EXTENSION = ".html"
     }
 }

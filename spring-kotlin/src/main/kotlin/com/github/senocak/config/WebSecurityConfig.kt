@@ -27,7 +27,7 @@ class WebSecurityConfig(
     @Throws(Exception::class)
     @Bean
     fun configure(http: HttpSecurity): SecurityFilterChain {
-        http.cors()
+        return http.cors()
             .and()
                 .csrf()
                 .disable()
@@ -62,7 +62,8 @@ class WebSecurityConfig(
                 ).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/posts/**/comment").permitAll()
                 .anyRequest().authenticated()
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        return http.build()
+            .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .build()
     }
 }

@@ -13,13 +13,13 @@ class WebsocketConfig(
     private val websocketChannelHandler: WebsocketChannelHandler,
     private val httpHandshakeInterceptor: HttpHandshakeInterceptor
 ): WebSocketConfigurer {
-
     /**
      * Register websocket handlers.
      * @param registry WebSocketHandlerRegistry
      */
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(websocketChannelHandler, "/websocket/{userId}/{channelId}")
+        registry
+            .addHandler(websocketChannelHandler, "/websocket/{userId}/{channelId}")
             .addInterceptors(httpHandshakeInterceptor)
             .setAllowedOrigins("*")
     }

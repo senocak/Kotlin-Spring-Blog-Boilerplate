@@ -36,8 +36,6 @@ class CustomAuthenticationManager(
             authorities.add(SimpleGrantedAuthority(RoleName.ROLE_ADMIN.role))
 
         val loadUserByUsername = userService.loadUserByUsername(authentication.name)
-        // val auth: Authentication = UsernamePasswordAuthenticationToken(user, user.password, authorities)
-        // we can set either from local or security user
         val auth: Authentication = UsernamePasswordAuthenticationToken(loadUserByUsername, user.password, authorities)
         SecurityContextHolder.getContext().authentication = auth
         log.debug("Authentication is set to SecurityContext for ${user.name}")

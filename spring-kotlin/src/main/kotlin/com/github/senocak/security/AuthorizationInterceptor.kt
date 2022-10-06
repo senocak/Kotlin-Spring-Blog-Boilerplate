@@ -99,7 +99,7 @@ class AuthorizationInterceptor(private val authenticationService: Authentication
         return try {
             authenticationService.isAuthorized(authorize.roles)
         } catch (ex: Exception) {
-            log.trace("Exception occurred while authorizing. Ex: {}", ExceptionUtils.getStackTrace(ex))
+            log.trace("Exception occurred while authorizing. Exception: {}", ExceptionUtils.getStackTrace(ex))
             false
         }
     }

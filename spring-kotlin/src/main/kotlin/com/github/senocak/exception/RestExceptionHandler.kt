@@ -1,5 +1,6 @@
 package com.github.senocak.exception
 
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.github.senocak.domain.ExceptionDto
 import com.github.senocak.util.OmaErrorMessageType
 import org.slf4j.Logger
@@ -35,7 +36,7 @@ class RestExceptionHandler {
         MissingPathVariableException::class,
         HttpMessageNotReadableException::class,
         MissingServletRequestParameterException::class,
-        com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException::class,
+        MissingKotlinParameterException::class,
         UndeclaredThrowableException::class
     )
     fun handleBadRequestException(ex: Exception): ResponseEntity<Any> {

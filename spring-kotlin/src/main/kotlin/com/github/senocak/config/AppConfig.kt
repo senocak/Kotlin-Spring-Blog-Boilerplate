@@ -29,7 +29,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @EnableAsync
 @Configuration
 class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor): WebMvcConfigurer {
-//    @Autowired lateinit var authorizationInterceptor: AuthorizationInterceptor
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun configureAsyncSupport(configurer: AsyncSupportConfigurer) {
@@ -48,8 +47,10 @@ class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor):
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addRedirectViewController("/", "/index.html")
-        registry.addRedirectViewController("/swagger", "/swagger-ui/index.html")
+        registry
+            .addRedirectViewController("/", "/index.html")
+        registry
+            .addRedirectViewController("/swagger", "/swagger-ui/index.html")
     }
 
     /**
@@ -57,7 +58,9 @@ class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor):
      * @param registry -- Stores registrations of resource handlers for serving static resources
      */
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("//**").addResourceLocations("classpath:/static/")
+        registry
+            .addResourceHandler("//**")
+            .addResourceLocations("classpath:/static/")
     }
 
     /**
@@ -66,7 +69,9 @@ class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor):
      * @param registry -- List of mapped interceptors.
      */
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(authorizationInterceptor).addPathPatterns("/api/v1/**")
+        registry
+            .addInterceptor(authorizationInterceptor)
+            .addPathPatterns("/api/v1/**")
     }
 
     /**
@@ -82,27 +87,21 @@ class AppConfig(private val authorizationInterceptor: AuthorizationInterceptor):
 
     @Bean
     fun customOpenAPI(@Value("\${springdoc.version}") appVersion: String?): OpenAPI? {
-        return OpenAPI() //.addSecurityItem(new SecurityRequirement().addList(securitySchemeName)) // To enable for them all
-            .components(
-                Components()
-                    .addSecuritySchemes(
-                        AppConstants.securitySchemeName,
-                        SecurityScheme()
-                            .name(AppConstants.securitySchemeName)
-                            .type(SecurityScheme.Type.HTTP)
-                            .scheme("bearer")
-                            .bearerFormat("JWT")
-                    )
+        return OpenAPI().components(
+            Components().addSecuritySchemes(AppConstants.securitySchemeName,
+                SecurityScheme()
+                    .name(AppConstants.securitySchemeName)
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("bearer")
+                    .bearerFormat("JWT")
             )
-            .info(
-                Info().title("Blog Rest Api - Kotlin").version(appVersion)
-                    .description(
-                        "Fully completed blog project written Spring Boot, Spring MVC, Spring Data," +
-                                "Spring Security, Swagger, Thymeleaf, and more."
-                    )
-                    .termsOfService("https://github.com/senocak")
-                    .license(License().name("Apache 2.0").url("https://springdoc.org"))
-            )
+        ).info(Info()
+            .title("Blog Rest Api - Kotlin")
+            .version(appVersion)
+            .description("Fully completed blog project written with Spring Boot")
+            .termsOfService("https://github.com/senocak")
+            .license(License().name("Apache 2.0").url("https://springdoc.org"))
+        )
     }
 
     @Bean

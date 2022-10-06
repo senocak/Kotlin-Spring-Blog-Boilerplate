@@ -66,8 +66,9 @@ class UserService(private val userRepository: UserRepository): UserDetailsServic
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): org.springframework.security.core.userdetails.User {
         val user: User? = findByUsername(username)
-        val authorities: List<GrantedAuthority> =
-            user!!.roles.stream().map { r -> SimpleGrantedAuthority(RoleName.fromString(r.name.toString())!!.name) }.collect(Collectors.toList())
+        val authorities: List<GrantedAuthority> = user!!.roles.stream()
+            .map { r -> SimpleGrantedAuthority(RoleName.fromString(r.name.toString())!!.name) }
+            .collect(Collectors.toList())
         return org.springframework.security.core.userdetails.User(user.username, user.password, authorities)
     }
 
