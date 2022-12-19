@@ -27,5 +27,5 @@ fun main(args: Array<String>) {
         })
         .build()
         .run(*args)
-    AppConstants.setLevel("info")
+    AppConstants.setLevel("debug")
 }
