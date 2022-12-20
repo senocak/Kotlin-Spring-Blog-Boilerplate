@@ -28,9 +28,10 @@ class UserDataJpaTest {
     @Test
     //@Sql("/db.sql")
     fun whenInjectInMemoryDataSource_thenReturnCorrectEmployeeCount() {
-        assertEquals(2,userRepository.findAll().count())
+        //userRepository.save(User("name1","username1","email@email1.com","password1"))
+        assertEquals(3,userRepository.findAll().count())
 
         val queryForList = jdbcTemplate.queryForList("select * from users")
-        assertEquals(2,queryForList.size)
+        assertEquals(3,queryForList.size)
     }
 }

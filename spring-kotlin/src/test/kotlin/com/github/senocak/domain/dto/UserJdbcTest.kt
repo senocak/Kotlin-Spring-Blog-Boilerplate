@@ -23,8 +23,7 @@ import org.springframework.test.context.jdbc.Sql
 ])
 @Sql(value = ["/db.sql"])
 class UserJdbcTest {
-    @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    @Autowired private lateinit var jdbcTemplate: JdbcTemplate
 
     @Test
     fun whenInjectInMemoryDataSource_thenReturnCorrectEmployeeCount() {
