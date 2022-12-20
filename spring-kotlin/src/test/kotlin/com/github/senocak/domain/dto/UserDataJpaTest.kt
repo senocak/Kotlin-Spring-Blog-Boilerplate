@@ -1,19 +1,15 @@
 package com.github.senocak.domain.dto
 
 import com.github.senocak.repository.UserRepository
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
-
 
 @DataJpaTest
-@ExtendWith(SpringExtension::class)
 @ActiveProfiles(value = ["datajpa-test"])
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 /*
@@ -31,10 +27,10 @@ class UserDataJpaTest {
 
     @Test
     //@Sql("/db.sql")
-    fun test() {
-        Assertions.assertEquals(2,userRepository.findAll().count())
+    fun whenInjectInMemoryDataSource_thenReturnCorrectEmployeeCount() {
+        assertEquals(2,userRepository.findAll().count())
 
         val queryForList = jdbcTemplate.queryForList("select * from users")
-        Assertions.assertEquals(2,queryForList.size)
+        assertEquals(2,queryForList.size)
     }
 }
